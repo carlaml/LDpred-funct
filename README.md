@@ -18,14 +18,14 @@ See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD 
   - Use flag: --FUNCT_FILE
 
 3. Summary statistics file. Please check that the summary statistics contains a column for each of the follwing field (header is important here, important fields are in bold)
-    - *CHR*   Chromosome
-    - *SNP*   SNP ID
-    - *BP*    Physical position (base-pair)
-    - *A1*    Minor allele name (based on whole sample) 
-    - *A2*    Major allele name 
-    - *P*     Asymptotic p-value  
-    - *BETA*  Effect size
-    - *Z*     Z-score 
+    - **CHR**   Chromosome
+    - **SNP**   SNP ID
+    - **BP**    Physical position (base-pair)
+    - **A1**    Minor allele name (based on whole sample) 
+    - **A2**    Major allele name 
+    - **P**     Asymptotic p-value  
+    - **BETA**  Effect size
+    - **Z**     Z-score 
 
   - Use flag: --ssf
 
