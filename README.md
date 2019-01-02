@@ -1,5 +1,5 @@
 # LDpred-funct
-Here we develop the software for the method LDpredfunct described in Marquez-Luna, et al, "Modeling functional enrichment improves polygenic prediction accuracy in UK Biobank and 23andMe data sets", Biorxiv. https://www.biorxiv.org/content/early/2018/07/24/375337 
+Here we present the software for the method LDpredfunct described in Marquez-Luna, et al, "Modeling functional enrichment improves polygenic prediction accuracy in UK Biobank and 23andMe data sets", Biorxiv. https://www.biorxiv.org/content/early/2018/07/24/375337 
 
 ### Input files
 
