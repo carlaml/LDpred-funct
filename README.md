@@ -9,7 +9,7 @@ git clone https://github.com/carlaml/LDpred-funct.git
 
 Alternatively, you can simply download the source files and place them somewhere.
 
-With the Python source code in place and the three packages **h5py**, **scipy**, and **libplinkio** installed.
+You also need to install the packages **h5py**, **scipy**, and **libplinkio** installed. With pip (see https://pip.pypa.io/en/latest/quickstart.html), one can install **libplinkio** using the following command: ```pip install plinkio```
 
 
 ### Input files
@@ -89,3 +89,6 @@ optional flags:
 
 python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${statsfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpred}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
 ```
+
+#### Acknowledgments
+We used LDpred software developed by Bjarni Vilhjalmsson as basis fot this software.
