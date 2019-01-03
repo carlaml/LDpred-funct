@@ -1,6 +1,17 @@
 # LDpred-funct
 Here we present the software for the method LDpredfunct described in Marquez-Luna, et al, "Modeling functional enrichment improves polygenic prediction accuracy in UK Biobank and 23andMe data sets", Biorxiv. https://www.biorxiv.org/content/early/2018/07/24/375337 
 
+### Installing LDpred-funct
+
+As with most Python packages, configurating LDpred-funct is simple. You can either use git (which is installed on most systems) and clone this repository using the following git command:
+
+git clone https://github.com/carlaml/LDpred-funct.git
+
+Alternatively, you can simply download the source files and place them somewhere.
+
+With the Python source code in place and the three packages **h5py**, **scipy**, and **libplinkio** installed.
+
+
 ### Input files
 
 1. Plink files. One per chromosome from the validation (insert the character "[1:22]" instead of the chromsome numbers). These are used as LD-reference panel and later to compute PRS.
