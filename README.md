@@ -9,7 +9,7 @@ git clone https://github.com/carlaml/LDpred-funct.git
 
 Alternatively, you can simply download the source files and place them somewhere.
 
-You also need to install the packages **h5py**, **scipy**, and **libplinkio** installed. With pip (see https://pip.pypa.io/en/latest/quickstart.html), one can install **libplinkio** using the following command: ```pip install plinkio```
+You also need to install the packages **h5py**, **scipy**, and **libplinkio**. With pip (see https://pip.pypa.io/en/latest/quickstart.html), one can install **libplinkio** using the following command: ```pip install plinkio```
 
 
 ### Input files
