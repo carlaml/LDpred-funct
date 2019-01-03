@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+/usr/bin/env python
 # Usar ldpred-master/coord_genotypes_ldpredfunct.py como base
 
 #### bim_file = "/n/scratch2/sg374/UKB_LIKELIHOOD/25K_Carla/plink_files/Final_UK10K.[1:22]"
@@ -27,9 +27,9 @@ def parse_parameters():
     #        sys.exit(2)
 
 
-    long_options_list = ['FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination', 'skip_ambiguous', 'ssf=', 'N=', "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf="]
+    long_options_list = ['FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination', 'skip_ambiguous', 'ssf=', 'N=',"K=", "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf="]
 
-    p_dict = {'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01, 'skip_coordination':False, 'skip_ambiguous':False,
+    p_dict = {'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01,'K':None, 'skip_coordination':False, 'skip_ambiguous':False,
     'ssf':None, 'N':None, "posterior_means":"output-posterior_means", 'ld_radius':None, 'H2':None, 'out':"output-prs","pf":None}
 
     if len(sys.argv) == 1:
@@ -65,6 +65,8 @@ def parse_parameters():
                 p_dict['ssf'] = arg
             elif opt in ("--pf"):
                 p_dict['pf'] = arg
+            elif opt in ("--K"):
+                p_dict['K'] = arg
             elif opt in ("--FUNCT_FILE"):
                 p_dict['FUNCT_FILE'] = arg
             elif opt in ("--N"):
@@ -141,8 +143,10 @@ def main():
     weights_file = '%s_LDpred-inf-ldscore.txt' % (p_dict['posterior_means'])
     print("Reading %s"%weights_file)
     if os.path.isfile(weights_file):
-        K_bins=int(min(100,math.ceil((0.9*num_individs)/300)))
-        print(K_bins)
+        if p_dict['K']==None:
+            K_bins=int(min(100,math.ceil((0.9*num_individs)/300)))
+        else:
+            K_bins=int(p_dict['K'])
         if K_bins>1:
             out_file = '%s_validation_LDpred-funct_%d_bins.txt' % (p_dict['out'], K_bins)
         else:
