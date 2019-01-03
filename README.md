@@ -91,4 +91,4 @@ python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_F
 ```
 
 #### Acknowledgments
-We used LDpred software developed by Bjarni Vilhjalmsson as basis fot this software.
+We used LDpred software developed by Bjarni Vilhjalmsson as basis for this software.
