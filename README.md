@@ -74,6 +74,7 @@ h2= pre-computed SNP heritability
 
 optional flag:
 --ld_radius= Pre-defined ld-radious
+--K= Number of bins for LDpred-funct
 
 python ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${statsfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpred}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
 ```
