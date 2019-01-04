@@ -19,7 +19,7 @@ You also need to install the packages **h5py**, **scipy**, and **libplinkio**. W
   - Example: plinkfile="my_plink_files/Final.chrom[1:22]"
   - Use flag: --gf
  
-2. File with enrichments (see Gazal et al 2017 Nat Genet and Finucane et al 2015 Nat Genet).
+2. File with functional enrichments (see Gazal et al 2017 Nat Genet and Finucane et al 2015 Nat Genet).
 First you will need to compute the per-SNP heritability under the baseline-LD model using SLDSC.
 See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD annotations, https://data.broadinstitute.org/alkesgroup/LDSCORE/
   - Format of FUNCTFILE:
