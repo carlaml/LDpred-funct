@@ -54,15 +54,18 @@ See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD 
   - Use flag: --N
 2. Estimated SNP Heritability (pre-compute this using your favorite method). 
   - Use flag: --H2
-3. LD radius (optional). If not provided, it is computed as (1/2)*0.15% of total number of SNPs.  Use flag: --ld_radius
+3. LD radius (optional). If not provided, it is computed as (1/2)*0.15% of total number of SNPs.  
+  - Use flag: --ld_radius
 
 ### Output files
 1. Coordinated files: This is an hdf5 file that stores the coordinated genotype data with the summary statistics and functional enrichment.
   - Use flag: --coord
   - Note: the output file needs to be named differently for different runs.
+  
 2. Posterior mean effect sizes: Estimated posterior mean effect size from LDpred-funct-inf.
-use flag: --posterior_means
-  - Output: Polygenic risk score for each individual in the validation. 
+  - Use flag: --posterior_means
+  
+3. Output: Polygenic risk score for each individual in the validation. 
   - Description:
     - Column 1: Sample ID
     - Column 2: True phenotype
