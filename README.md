@@ -80,7 +80,7 @@ See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD 
 plinkfile="my_plink_files/Final.chrom[1:22]"
 outCoord="my_analysis/Coord_Final"
 statsfile="my_analysis/sumary_statistics.txt"
-outLdpred="my_analysis/ldpredfunct_posterior_means"
+outLdpredfunct="my_analysis/ldpredfunct_posterior_means"
 outValidate="my_analysis/ldpredfunct_prs"
 phenotype="my_analysis/trait_1.txt"
 N=training sample size
@@ -90,7 +90,7 @@ optional flags:
 --ld_radius= Pre-defined ld-radius
 --K= Number of bins for LDpred-funct
 
-python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${statsfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpred}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
+python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${statsfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpredfunct}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
 ```
 
 #### Acknowledgments
