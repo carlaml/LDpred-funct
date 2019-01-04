@@ -58,7 +58,7 @@ See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD 
   - Use flag: --ld_radius
 
 ### Output files
-1. Coordinated files: This is an hdf5 file that stores the coordinated genotype data with the summary statistics and functional enrichment.
+1. Coordinated files: This is an hdf5 file that stores the coordinated genotype data with the summary statistics and functional enrichments.
   - Use flag: --coord
   - Note: the output file needs to be named differently for different runs.
   
@@ -87,7 +87,7 @@ N=training sample size
 h2= pre-computed SNP heritability
 
 optional flags:
---ld_radius= Pre-defined ld-radious
+--ld_radius= Pre-defined ld-radius
 --K= Number of bins for LDpred-funct
 
 python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${statsfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpred}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
