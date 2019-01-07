@@ -27,10 +27,10 @@ def parse_parameters():
     #        sys.exit(2)
 
 
-    long_options_list = ['FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination', 'skip_ambiguous', 'ssf=', 'N=',"K=", "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf="]
+    long_options_list = ['FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination','verbose', 'skip_ambiguous',"chisq", 'ssf=', 'N=',"K=", "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf="]
 
-    p_dict = {'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01,'K':None, 'skip_coordination':False, 'skip_ambiguous':False,
-    'ssf':None, 'N':None, "posterior_means":"output-posterior_means", 'ld_radius':None, 'H2':None, 'out':"output-prs","pf":None}
+    p_dict = {'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01,'K':None,"chisq":False,  'skip_coordination':False, 'skip_ambiguous':False,
+    'ssf':None, 'N':None, "posterior_means":"output-posterior_means", 'ld_radius':None, 'H2':None,'verbose':False, 'out':"output-prs","pf":None}
 
     if len(sys.argv) == 1:
         print __doc__
@@ -61,6 +61,10 @@ def parse_parameters():
                 p_dict['skip_coordination'] = True
             elif opt in ("--skip_ambiguous"):
                 p_dict['skip_ambiguous'] = True
+            elif opt in ("--verbose"):
+                p_dict['verbose'] = True
+            elif opt in ("--chisq"):
+                p_dict['chisq'] = True
             elif opt in ("--ssf"):
                 p_dict['ssf'] = arg
             elif opt in ("--pf"):
@@ -117,7 +121,7 @@ def main():
     print("Step 1: Coordinate summary statistics, genotype and functional enrichments files.\n")
     coord.parse_sum_stats_standard_ldscore(filename=p_dict['ssf'], bimfile_name=p_dict['gf'], hdf5_file_name=p_dict['coord'],
                                      n=p_dict['N'],
-                                     outfile=p_dict['coord'] + "_snps_NaN.txt", FUNCT_FILE=p_dict["FUNCT_FILE"])
+                                     outfile=p_dict['coord'] + "_snps_NaN.txt", FUNCT_FILE=p_dict["FUNCT_FILE"],CHISQ=p_dict['chisq'])
 
     coord.coordinate_genot_ss(genotype_filename=p_dict['gf'], genetic_map_dir=p_dict['gmdir'], check_mafs=p_dict['check_mafs'],
                     hdf5_file_name=p_dict['coord'], min_maf=p_dict['maf'], skip_coordination=p_dict['skip_coordination'],
@@ -125,7 +129,7 @@ def main():
 
     print("Step 2: Compute posterior mean effect sizes using a functional prior.")
     ldpredfunct.ldpred_funct_genomewide(data_file=p_dict['coord'], out_file_prefix=p_dict['posterior_means'], ld_radius=p_dict['ld_radius'],
-                          n=p_dict['N'],h2=p_dict['H2'])
+                          n=p_dict['N'],h2=p_dict['H2'],verbose=p_dict['verbose'])
 
     print("Step 3: Compute polygenic risk score using previously computed posterior mean effect sizes.")
 
@@ -152,8 +156,9 @@ def main():
         else:
             out_file = '%s_validation_LDpred-funct_inf.txt' % (p_dict['out'])
         rsid_map=prs.parse_ldpred_res_bins(weights_file, K_bins=K_bins)
-        prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file)
+        prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'])
 
 
 if __name__ == '__main__':
     main()
+
