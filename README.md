@@ -93,6 +93,8 @@ optional flags:
 
 python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${statsfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpredfunct}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
 ```
+### Running recommendations
+For UK Biobank analysis described in Marquez-Luna, et al, "Modeling functional enrichment improves polygenic prediction accuracy in UK Biobank and 23andMe data sets", Biorxiv. https://www.biorxiv.org/content/early/2018/07/24/375337, I requested 70G of memory and jobs lasted approximately 10 hours.  
 
 #### Acknowledgments
 We used LDpred software developed by Bjarni Vilhjalmsson as basis for this software.
