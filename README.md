@@ -28,7 +28,7 @@ See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD 
 
   - Use flag: --FUNCT_FILE
 
-3. Summary statistics file. Please check that the summary statistics contains a column for each of the follwing field (header is important here, important fields are in bold)
+3. Summary statistics file. Please check that the summary statistics contains a column for each of the following field (header is important here, important fields are highlighted in bold font, the order of the columns it is not important).
     - **CHR**   Chromosome
     - **SNP**   SNP ID
     - **BP**    Physical position (base-pair)
@@ -36,7 +36,7 @@ See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD 
     - **A2**    Major allele name 
     - **P**     Asymptotic p-value  
     - **BETA**  Effect size
-    - **Z**     Z-score (default). If instead Chi-square statistic is provided, use the flag --chisq, and the **CHISQ** as column field.
+    - **Z**     Z-score (default). If instead Chi-square statistic is provided, use the flag --chisq, and **CHISQ** as column field.
     
 
   - Use flag: --ssf
