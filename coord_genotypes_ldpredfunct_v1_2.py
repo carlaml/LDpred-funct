@@ -35,14 +35,14 @@ def parse_parameters():
 
     long_options_list = ['gf=',"gf_list=", 'vgf=', 'ssf=', 'out=', 'vbim=', 'N=', 'ssf_format=', 'gmdir=', 'indiv_list=',
                          'gf_format=', 'maf=', 'skip_coordination', 'skip_ambiguous', 'check_mafs', 'h', 'help',
-                         'debug', 'keep_all', 'filter_sldsc=', "sigma2_trait=", "zscore", "FUNCT_separate",
+                         'debug', 'keep_all', 'filter_sldsc=', "sigma2_trait=", "zscore", "FUNCT_separate","chisq",
                          "FUNCT_FILE="]
 
     p_dict = {'gf': None,"gf_list":None, 'vgf': None, 'ssf': None, 'out': None, 'vbim': None, 'N': None, 'ssf_format': 'STANDARD',
               'gmdir': None,
               'indiv_list': None, 'gf_format': 'PLINK', 'maf': 0.01, 'skip_coordination': False,
               'skip_ambiguous': False, 'debug': False, 'check_mafs': False, 'keep_all': False, 'filter_sldsc': 0,
-              "sigma2_trait": 1, "zscore": False, "FUNCT_separate": False, "FUNCT_FILE": None}
+              "sigma2_trait": 1, "zscore": False,"chisq":False, "FUNCT_separate": False, "FUNCT_FILE": None}
 
     if len(sys.argv) == 1:
         print __doc__
@@ -89,6 +89,8 @@ def parse_parameters():
                 p_dict['keep_all'] = True
             elif opt in ("--zscore"):
                 p_dict['zscore'] = True
+            elif opt in ("--chisq"):
+                p_dict['chisq'] = True
             elif opt in ("--FUNCT_separate"):
                 p_dict['FUNCT_separate'] = True
             elif opt in ("--FUNCT_FILE"):
@@ -189,7 +191,7 @@ def natural_keys(text):
 def parse_sum_stats_standard_ldscore(filename=None,
                                      bimfile_name=None,
                              hdf5_file_name=None,
-                             n=None,outfile=None,filter=0,FUNCT_separate=True,FUNCT_FILE=False):
+                             n=None,outfile=None,filter=0,FUNCT_separate=True,FUNCT_FILE=False,CHISQ=False):
     """
     Summary statistics file must have the following columns with the following header (order is not important)
     CHR BP SNP A1 A2 BETA Z P
@@ -250,11 +252,13 @@ def parse_sum_stats_standard_ldscore(filename=None,
             idx_BP = header.index("BP")
             idx_SNP = header.index("SNP")
             idx_BETA = header.index("BETA")
-            idx_Z = header.index("Z")
             idx_P = header.index("P")
             idx_A1 = header.index("A1")
             idx_A2 = header.index("A2")
-
+            if CHISQ:
+                idx_Z = header.index("CHISQ")
+            else:
+                idx_Z = header.index("Z")
             for line in f:
                 l = (line.strip()).split()
                 try:
@@ -280,7 +284,10 @@ def parse_sum_stats_standard_ldscore(filename=None,
                                 chrom_dict[chrom]['nts'].append(nt)
                                 raw_beta = float(l[idx_BETA])
                                 chrom_dict[chrom]['log_odds'].append(raw_beta)
-                                beta = sp.sign(float(l[idx_BETA]))*abs(float(l[idx_Z]))
+                                if CHISQ:
+                                    beta = sp.sign(float(l[idx_BETA])) * abs(sp.sqrt(float(l[idx_Z])))
+                                else:
+                                    beta = sp.sign(float(l[idx_BETA]))*abs(float(l[idx_Z]))
                                 beta_norm.append(beta / sp.sqrt(n))
                                 chrom_dict[chrom]['betas'].append(beta / sp.sqrt(n))
                                 chrom_dict[chrom]['ld_score'].append(float(funct_dict[sid]))
@@ -332,7 +339,7 @@ def parse_sum_stats_standard_ldscore(filename=None,
         prev_pos = -1
         for sid, pos, nt, beta, lo, lsc,  p in sl:
             if pos == prev_pos:
-                print 'duplicated position %d' % pos
+                print 'duplicated position %d' % int(pos)
                 continue
             else:
                 prev_pos = pos
