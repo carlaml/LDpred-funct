@@ -127,7 +127,7 @@ def ldpredfunct_solve_ldblocks(beta_hats, snp_h2, h2=0.1,  n=1000, genotypes=Non
     num_betas = len(beta_hats)
     updated_betas = sp.empty(num_betas)
 
-    for i, wi in enumerate(range(0, num_betas, ld_window_size)):
+    for i, wi in enumerate(range(0, num_betas, int(ld_window_size))):
         start_i = wi
         stop_i = min(num_betas, wi + ld_window_size)
         curr_window_size = stop_i - start_i
@@ -162,7 +162,7 @@ def get_LDpred_single_ld_table(wi,snps, ld_window_size=200):
 
 
 def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=None,
-                          n=None, h2=None, Cval=None,method="ldscore_solve",m=None,SVD=False):
+                          n=None, h2=None, Cval=None,method="ldscore_solve",m=None,SVD=False,verbose=False):
     """
     Calculate LDpred for a genome
     """
@@ -209,9 +209,9 @@ def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=No
     print ( "Total number of SNPs: %d"%m)
 
     if ld_radius==None:
-        ld_window=round((0.15/100)*m)- round((0.15/100)*m)%100 ### set window size to a close number
+        ld_window=int(round((0.15/100)*m)- round((0.15/100)*m)%100) ### set window size to a close number
     else:
-        ld_window=2 * ld_radius
+        ld_window=int(2 * ld_radius)
 
     print ("LD window size: %d" % ld_window)
 
@@ -288,10 +288,10 @@ def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=No
 
         if method == "ldpredinf_solve":
             updated_betas = ldpred_inf_M_solve(pval_derived_betas, genotypes=snps,
-                                         h2=h2, n=n, ld_window_size=ld_window, verbose=True, m=m, SVD=SVD)
+                                         h2=h2, n=n, ld_window_size=ld_window, verbose=verbose, m=m, SVD=SVD)
         elif method == "ldscore_solve":
             updated_betas = ldpredfunct_solve_ldblocks(pval_derived_betas, snp_h2, genotypes=snps,
-                                               h2=h2_chrom, n=n, ld_window_size=ld_window, verbose=False,
+                                               h2=h2_chrom, n=n, ld_window_size=ld_window, verbose=verbose,
                                                Cvalue=Cval)
 
         updated_betas = updated_betas / (snp_stds.flatten())
@@ -340,5 +340,3 @@ If they are a subset of the validation data set, then we suggest recalculate LDp
 
 if __name__ == '__main__':
     main()
-
-
