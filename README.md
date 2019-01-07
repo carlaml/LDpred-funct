@@ -36,7 +36,8 @@ See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD 
     - **A2**    Major allele name 
     - **P**     Asymptotic p-value  
     - **BETA**  Effect size
-    - **Z**     Z-score 
+    - **Z**     Z-score (default). If instead Chi-square statistic is provided use the flag --chisq, and the **CHISQ** as column field.
+    
 
   - Use flag: --ssf
 
