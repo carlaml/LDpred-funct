@@ -20,7 +20,7 @@ You also need to install the packages **h5py**, **scipy**, and **libplinkio**. W
   - Use flag: --gf
  
 2. File with functional enrichments (see Gazal et al 2017 Nat Genet and Finucane et al 2015 Nat Genet).
-    - First you will need to estimate the per-SNP heritability inferred using S-LDSC (see instructions [here](https://github.com/bulik/ldsc/wiki/Partitioned-Heritability)) under the baselineLD model (you can download Baseline-LD annotations [here](https://data.broadinstitute.org/alkesgroup/LDSCORE/)). When running S-LDSC make sure to use the --print-coefficients flag to get the regression coefficients.
+    - First you will need to estimate the per-SNP heritability inferred using S-LDSC (see instructions [here](https://github.com/bulik/ldsc/wiki/Partitioned-Heritability)) under the baselineLD model (you can download Baseline-LD annotations [here](https://data.broadinstitute.org/alkesgroup/LDSCORE/)), and use the summary statistics that will be later used as training. When running S-LDSC make sure to use the --print-coefficients flag to get the regression coefficients.
     - After running S-LDSC:
       1. Get h2g estimate from the *.log file.
       2. Get the regression coefficients from the *.results file (column 8). Divide the regression coeffients by h2g, define it as T=tau/h2g which is a vector of dimension Cx1, where C is the total number of annotations.
