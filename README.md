@@ -24,7 +24,7 @@ You also need to install the packages **h5py**, **scipy**, and **libplinkio**. W
     - After running S-LDSC:
       1. Get h2g estimate from the *.log file.
       2. Get the regression coefficients from the *.results file (column 8). Divide the regression coeffients by h2g, define it as T=tau/h2g which is a vector of dimension Cx1, where C is the total number of annotations.
-      3. From the baselineLD annotations downloaded from here, read the file baselineLD.*.annot.gz. Load the annotations file, and only keep the annotations columns (remove first 4 columns). Call this matrix X, with dimensions MxC, where M is the number of SNPs and C is the total number of annotations.
+      3. From the baselineLD annotations downloaded from [here](https://data.broadinstitute.org/alkesgroup/LDSCORE/), read the annotations file baselineLD.*.annot.gz, and only keep the annotations columns (i.e. remove first 4 columns). Call this matrix X, with dimensions MxC, where M is the number of SNPs and C is the total number of annotations.
       4. Define the expected per-SNP heritability (sigma2_i from the LDpred-funct manuscript) as the result from multiplying the X and T.
 
   - Format of FUNCTFILE:
