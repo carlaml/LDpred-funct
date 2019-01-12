@@ -20,7 +20,15 @@ You also need to install the packages **h5py**, **scipy**, and **libplinkio**. W
   - Use flag: --gf
  
 2. File with functional enrichments (see Gazal et al 2017 Nat Genet and Finucane et al 2015 Nat Genet).
-First you will need to compute the per-SNP heritability under the baseline-LD model using SLDSC.
+First you will need to estimate the per-SNP heritability inferred using S-LDSC under the baseline-LD model.
+Estimate per-SNP heritability using S-LDSC (see instructions [here](https://github.com/bulik/ldsc/wiki/Partitioned-Heritability)) under the baselineLD model (you can download Baseline-LD annotations [here](https://data.broadinstitute.org/alkesgroup/LDSCORE/)), use the --print-coefficients flag to get the regression coefficients.
+After running S-LDSC:
+1. Get h2g estimate from the *.log file.
+2. Get the regression coefficients from the *.results file (column 8). Divide the regression coeffients by h2g, define it as T=tau/h2g which is a vector of dimension Cx1, where C is the total number of annotations.
+3. From the baselineLD annotations downloaded from here, read the file baselineLD.*.annot.gz. Load the annotations file, and only keep the annotations columns (remove first 4 columns). Call this matrix X, with dimensions MxC, where M is the number of SNPs and C is the total number of annotations.
+4. Define the expected per-SNP heritability (sigma2_i from the LDpred-funct manuscript) as the result from multiplying the X and T.
+
+
 See: ldsc software and tutorials, http://www.github.com/bulik/ldsc; baseline-LD annotations, https://data.broadinstitute.org/alkesgroup/LDSCORE/
   - Format of FUNCTFILE:
     - Column 1: SNP ID
