@@ -202,6 +202,7 @@ def parse_sum_stats_standard_ldscore(filename=None,
         bimf1 = re.sub(r"\[1:22\]", "[0-9]", bimfile_name)
         bimf2 = re.sub(r"\[1:22\]", "[0-2][0-9]", bimfile_name)
 
+<<<<<<< HEAD
         bimfile_list = glob.glob(bimf1 + ".bim") + glob.glob(bimf2 + ".bim")
         bimfile_list = list(set(bimfile_list))
         bimfile_list.sort(key=natural_keys)
@@ -210,6 +211,11 @@ def parse_sum_stats_standard_ldscore(filename=None,
         valid_sids = set()
         bimfile_list=glob.glob(bimf1+".bim")+glob.glob(bimf2+".bim")
         bimfile_list=list(set(bimfile_list))
+=======
+        print 'Parsing SNP list'
+        valid_sids = set()
+        bimfile_list=glob.glob(bimf1+".bim")+glob.glob(bimf2+".bim")
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
         bimfile_list.sort(key=natural_keys)
         for bimfile in bimfile_list:
             print 'Parsing bim file: %s' % bimfile
@@ -309,8 +315,14 @@ def parse_sum_stats_standard_ldscore(filename=None,
                                 beta = sp.sign(raw_beta)*((-1)*stats.norm.ppf(pval / 2.0))
                                 chrom_dict[chrom]['betas'].append(beta / sp.sqrt(n))
                                 chrom_dict[chrom]['ld_score'].append(float(funct_dict[sid]))
+<<<<<<< HEAD
                 except ValueError:
                     print "Issue with the following line: %s" % " ".join(l)
+=======
+
+                except ValueError:
+                    print "Chromosome Not an integer!!! it is %s" % l[0][3:]
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
 
         except:
             print("Please check that the summary statistics contains a column for each of the follwing field:\n CHR (Chromosome)\n SNP \t SNP ID \n BP \t Physical position (base-pair) \n A1 \t Minor allele name (based on whole sample) \n A2 \t Major allele name \nP  \t Asymptotic p-value \n BETA \t Effect size \n Z \t Z-score \n")
@@ -388,6 +400,7 @@ def coordinate_genot_ss(genotype_filename=None,
     bimf1 = re.sub(r"\[1:22\]", "[0-9]", genotype_filename)
     bimf2 = re.sub(r"\[1:22\]", "[0-2][0-9]", genotype_filename)
     bimfile_list = glob.glob(bimf1 + ".bim") + glob.glob(bimf2 + ".bim")
+<<<<<<< HEAD
     bimfile_list=list(set(bimfile_list))
     bimfile_list.sort(key=natural_keys)
     print 'Coordinating summary statistics and genotypes'
@@ -395,6 +408,12 @@ def coordinate_genot_ss(genotype_filename=None,
     tot_num_non_matching_nts = 0
     num_common_snps = 0
 
+=======
+    bimfile_list.sort(key=natural_keys)
+
+    print 'Coordinating summary statistics and genotypes'
+    count_chr=0
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
     for bimfile in bimfile_list:
         count_chr+=1
 
@@ -436,6 +455,10 @@ def coordinate_genot_ss(genotype_filename=None,
             hdf5_file.create_dataset('iids', data=iids)
 
 
+<<<<<<< HEAD
+=======
+        num_common_snps = 0
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
         corr_list = []
         rb_corr_list = []
 
@@ -458,6 +481,11 @@ def coordinate_genot_ss(genotype_filename=None,
 
         chr_dict = _get_chrom_dict_(loci, chromosomes)
 
+<<<<<<< HEAD
+=======
+        tot_num_non_matching_nts = 0
+
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
         chrom_d = chr_dict[chr_str]
         try:
             ssg = ssf['chrom_%d' % chrom]
@@ -636,6 +664,7 @@ def coordinate_genot_ss(genotype_filename=None,
 
         print '%d SNPs were retained on chromosome %d.' % (maf_filter_sum, chrom)
 
+<<<<<<< HEAD
         # if has_phenotype:
         #     print 'Normalizing SNPs'
         #     snp_means.shape = (len(raw_snps), 1)
@@ -661,6 +690,33 @@ def coordinate_genot_ss(genotype_filename=None,
         #             l = line.split()
         #             if l[0] in sid_set:
         #                 genetic_map.append(l[0])
+=======
+        rb_prs = sp.dot(sp.transpose(raw_snps), log_odds)
+        if has_phenotype:
+            print 'Normalizing SNPs'
+            snp_means.shape = (len(raw_snps), 1)
+            snp_stds.shape = (len(raw_snps), 1)
+            snps = (raw_snps - snp_means) / snp_stds
+            assert snps.shape == raw_snps.shape, 'Aha!'
+            snp_stds = snp_stds.flatten()
+            snp_means = snp_means.flatten()
+            prs = sp.dot(sp.transpose(snps), betas)
+            corr = sp.corrcoef(Y, prs)[0, 1]
+            corr_list.append(corr)
+            print 'PRS correlation for chromosome %d was %0.4f' % (chrom, corr)
+            rb_corr = sp.corrcoef(Y, rb_prs)[0, 1]
+            rb_corr_list.append(rb_corr)
+            print 'Raw effect sizes PRS correlation for chromosome %d was %0.4f' % (chrom, rb_corr)
+
+        sid_set = set(sids)
+        if genetic_map_dir is not None:
+            genetic_map = []
+            with gzip.open(genetic_map_dir + 'chr%d.interpolated_genetic_map.gz' % chrom) as f:
+                for line in f:
+                    l = line.split()
+                    if l[0] in sid_set:
+                        genetic_map.append(l[0])
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
 
         print 'Now storing coordinated data to HDF5 file from chrom_%d' % chrom[0]
         #print 'chrom_%d' % chrom[0]
@@ -674,23 +730,36 @@ def coordinate_genot_ss(genotype_filename=None,
         ofg.create_dataset('nts', data=nts)
         ofg.create_dataset('sids', data=sids)
         ofg.create_dataset('flips_ids', data=ss_flips)
+<<<<<<< HEAD
         # if genetic_map_dir is not None:
         #     ofg.create_dataset('genetic_map', data=genetic_map)
+=======
+        if genetic_map_dir is not None:
+            ofg.create_dataset('genetic_map', data=genetic_map)
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
         # print 'Sum of squared effect sizes:', sp.sum(betas ** 2)
         #         print 'Sum of squared log odds:', sp.sum(log_odds ** 2)
         ofg.create_dataset('betas', data=betas)
         ofg.create_dataset('log_odds', data=log_odds)
         if method == 'STANDARD_FUNCT':
             ofg.create_dataset('ld_score', data=ld_score)
+<<<<<<< HEAD
         # ofg.create_dataset('log_odds_prs', data=rb_prs)
         # if has_phenotype:
         #     risk_scores += prs
         # rb_risk_scores += rb_prs
+=======
+        ofg.create_dataset('log_odds_prs', data=rb_prs)
+        if has_phenotype:
+            risk_scores += prs
+        rb_risk_scores += rb_prs
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
         num_common_snps += len(betas)
         #print "In chr %d there are %d betas and %d indices for flips" % (chrom, len(betas), len(ss_flips))
         hdf5_file.flush()
         hdf5_file.close()
 
+<<<<<<< HEAD
         # if has_phenotype:
         #     # Now calculate the prediction r^2
         #     corr = sp.corrcoef(Y, risk_scores)[0, 1]
@@ -698,11 +767,21 @@ def coordinate_genot_ss(genotype_filename=None,
         #     print 'PRS R2 prediction accuracy for the whole genome was %0.4f (corr=%0.4f)' % (corr ** 2, corr)
         #     print 'Log-odds (effects) PRS R2 prediction accuracy for the whole genome was %0.4f (corr=%0.4f)' % (
         #     rb_corr ** 2, rb_corr)
+=======
+        if has_phenotype:
+            # Now calculate the prediction r^2
+            corr = sp.corrcoef(Y, risk_scores)[0, 1]
+            rb_corr = sp.corrcoef(Y, rb_risk_scores)[0, 1]
+            print 'PRS R2 prediction accuracy for the whole genome was %0.4f (corr=%0.4f)' % (corr ** 2, corr)
+            print 'Log-odds (effects) PRS R2 prediction accuracy for the whole genome was %0.4f (corr=%0.4f)' % (
+            rb_corr ** 2, rb_corr)
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
     print 'There were %d SNPs in common' % num_common_snps
     print 'In all, %d SNPs were excluded due to nucleotide issues.' % tot_num_non_matching_nts
     print 'Done coordinating genotypes and summary statistics datasets.'
 
 
+<<<<<<< HEAD
 
 
 def _parse_plink_snps_freqs_(genotype_file, snp_indices):
@@ -970,6 +1049,8 @@ def coordinate_ss(genotype_file=None,ssfformat=None,hdf5_file=None,outfile=None,
     return ssf_dict
 
 
+=======
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
 def main():
     p_dict = parse_parameters()
     print(p_dict)
@@ -993,16 +1074,26 @@ def main():
     # Open Hdf5 file
     #h5f = h5py.File(p_dict['out'],'a') ###
     parse_sum_stats_standard_ldscore(filename=p_dict['ssf'], bimfile_name=p_dict['gf'], hdf5_file_name=p_dict['out'], n=p_dict['N'],
+<<<<<<< HEAD
                                     outfile=p_dict['out'] + "_snps_NaN.txt",FUNCT_FILE=p_dict["FUNCT_FILE"],CHISQ=p_dict['chisq'])
+=======
+                                    outfile=p_dict['out'] + "_snps_NaN.txt",FUNCT_FILE=p_dict["FUNCT_FILE"])
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
 
 
     coordinate_genot_ss(genotype_filename=p_dict['gf'], genetic_map_dir=p_dict['gmdir'], check_mafs=p_dict['check_mafs'],
                     hdf5_file_name=p_dict['out'], min_maf=p_dict['maf'], skip_coordination=p_dict['skip_coordination'],
                     method=p_dict['ssf_format'], skip_ambiguous=p_dict['skip_ambiguous'])
 
+<<<<<<< HEAD
 
 
 if __name__ == '__main__':
     main()
 
 
+=======
+if __name__ == '__main__':
+    main()
+
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d

@@ -162,7 +162,11 @@ def get_LDpred_single_ld_table(wi,snps, ld_window_size=200):
 
 
 def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=None,
+<<<<<<< HEAD
                           n=None, h2=None, Cval=None,method="ldscore_solve",m=None,SVD=False,verbose=False,simulation=False,ssf_dict=None):
+=======
+                          n=None, h2=None, Cval=None,method="ldscore_solve",m=None,SVD=False,verbose=False):
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
     """
     Calculate LDpred for a genome
     """
@@ -253,12 +257,17 @@ def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=No
         snp_stds = snp_stds.flatten()
         ok_snps_filter = snp_stds > 0
         snp_stds = snp_stds[ok_snps_filter]
+<<<<<<< HEAD
         if simulation:
             pval_derived_betas =ssf_dict[chrom_str]['betas'][...]
             pval_derived_betas = pval_derived_betas[ok_snps_filter]
         else:
             pval_derived_betas = g['betas'][...]
             pval_derived_betas = pval_derived_betas[ok_snps_filter]
+=======
+        pval_derived_betas = g['betas'][...]
+        pval_derived_betas = pval_derived_betas[ok_snps_filter]
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
 
         #snp_freqs = g['freqs_ref'][...]  #### <<-----
         #snp_freqs = snp_freqs[ok_snps_filter]  ### <<----
@@ -278,6 +287,7 @@ def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=No
             chromosomes.extend([chrom_str]*len(pval_derived_betas))
             positions.extend(g['positions'][...])
             sids.extend(g['sids'][...])
+<<<<<<< HEAD
             nts.extend(g['nts'][...])
 
             if simulation:
@@ -285,6 +295,11 @@ def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=No
             else:
                 raw_effect_sizes.extend(g['log_odds'][...])
 
+=======
+            raw_effect_sizes.extend(g['log_odds'][...])
+            nts.extend(g['nts'][...])
+
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
         n_snps = len(pval_derived_betas)
 
         if h2 is not None:
@@ -348,5 +363,8 @@ If they are a subset of the validation data set, then we suggest recalculate LDp
 
 if __name__ == '__main__':
     main()
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d

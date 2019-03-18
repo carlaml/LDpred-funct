@@ -27,9 +27,15 @@ def parse_parameters():
     #        sys.exit(2)
 
 
+<<<<<<< HEAD
     long_options_list = ['validate_only','simulations','FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination','verbose', 'skip_ambiguous',"chisq", 'ssf=', 'N=',"K=", "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf="]
 
     p_dict = {'validate_only':False,'simulations':False,'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01,'K':None,"chisq":False,  'skip_coordination':False, 'skip_ambiguous':False,
+=======
+    long_options_list = ['FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination','verbose', 'skip_ambiguous',"chisq", 'ssf=', 'N=',"K=", "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf="]
+
+    p_dict = {'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01,'K':None,"chisq":False,  'skip_coordination':False, 'skip_ambiguous':False,
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
     'ssf':None, 'N':None, "posterior_means":"output-posterior_means", 'ld_radius':None, 'H2':None,'verbose':False, 'out':"output-prs","pf":None}
 
     if len(sys.argv) == 1:
@@ -63,10 +69,13 @@ def parse_parameters():
                 p_dict['skip_ambiguous'] = True
             elif opt in ("--verbose"):
                 p_dict['verbose'] = True
+<<<<<<< HEAD
             elif opt in ("--validate_only"):
                 p_dict['validate_only'] = True
             elif opt in ("--simulations"):
                 p_dict['simulations'] = True
+=======
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
             elif opt in ("--chisq"):
                 p_dict['chisq'] = True
             elif opt in ("--ssf"):
@@ -82,7 +91,10 @@ def parse_parameters():
             elif opt in ("--posterior_means"): p_dict['posterior_means'] = arg
             elif opt in ("--ld_radius"): p_dict['ld_radius'] = int(arg)
             elif opt in ("--H2"): p_dict['H2'] = float(arg)
+<<<<<<< HEAD
             elif opt in ("--maf"): p_dict['maf'] = float(arg)
+=======
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
             elif opt in ("--out"): p_dict['out'] = arg
             else:
                 print "Unkown option:", opt
@@ -123,6 +135,7 @@ def main():
         pf
         out
     """
+<<<<<<< HEAD
     if p_dict['validate_only']:
         print("Step 3: Compute polygenic risk score using previously computed posterior mean effect sizes.")
 
@@ -232,7 +245,52 @@ def main():
                 out_file = '%s_validation_LDpred-funct_inf.txt' % (p_dict['out'])
             rsid_map=prs.parse_ldpred_res_bins(weights_file, K_bins=K_bins)
             prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'])
+=======
+    print("Step 1: Coordinate summary statistics, genotype and functional enrichments files.\n")
+    coord.parse_sum_stats_standard_ldscore(filename=p_dict['ssf'], bimfile_name=p_dict['gf'], hdf5_file_name=p_dict['coord'],
+                                     n=p_dict['N'],
+                                     outfile=p_dict['coord'] + "_snps_NaN.txt", FUNCT_FILE=p_dict["FUNCT_FILE"],CHISQ=p_dict['chisq'])
+
+    coord.coordinate_genot_ss(genotype_filename=p_dict['gf'], genetic_map_dir=p_dict['gmdir'], check_mafs=p_dict['check_mafs'],
+                    hdf5_file_name=p_dict['coord'], min_maf=p_dict['maf'], skip_coordination=p_dict['skip_coordination'],
+                    method="STANDARD_FUNCT", skip_ambiguous=p_dict['skip_ambiguous'])
+
+    print("Step 2: Compute posterior mean effect sizes using a functional prior.")
+    ldpredfunct.ldpred_funct_genomewide(data_file=p_dict['coord'], out_file_prefix=p_dict['posterior_means'], ld_radius=p_dict['ld_radius'],
+                          n=p_dict['N'],h2=p_dict['H2'],verbose=p_dict['verbose'])
+
+    print("Step 3: Compute polygenic risk score using previously computed posterior mean effect sizes.")
+
+    if p_dict['pf'] is None:
+        if p_dict['gf'] is not None:
+            phen_map = prs.parse_phen_file(p_dict['gf']+'.fam', 'FAM')
+        else:
+            raise Exception('Validation phenotypes were not found.')
+    else:
+        phen_map = prs.parse_phen_file(p_dict['pf'],'STANDARD')
+    iids = set(phen_map.keys())
+    num_individs = len(phen_map)
+    assert num_individs>0, 'No phenotypes were found!'
+
+    weights_file = '%s_LDpred-inf-ldscore.txt' % (p_dict['posterior_means'])
+    print("Reading %s"%weights_file)
+    if os.path.isfile(weights_file):
+        if p_dict['K']==None:
+            K_bins=int(min(100,math.ceil((0.9*num_individs)/300)))
+        else:
+            K_bins=int(p_dict['K'])
+        if K_bins>1:
+            out_file = '%s_validation_LDpred-funct_%d_bins.txt' % (p_dict['out'], K_bins)
+        else:
+            out_file = '%s_validation_LDpred-funct_inf.txt' % (p_dict['out'])
+        rsid_map=prs.parse_ldpred_res_bins(weights_file, K_bins=K_bins)
+        prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'])
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
 
 
 if __name__ == '__main__':
     main()
+<<<<<<< HEAD
+=======
+
+>>>>>>> 90942a81942a08bfdb108a829e95beb8b5cec01d
