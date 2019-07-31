@@ -363,6 +363,197 @@ def get_prs_bins(genotype_file, rs_id_map, K_bins=1,phen_map=None,lasso=False,se
     return ret_dict
 
 
+def get_prs_bins_jackknife(genotype_file, rs_id_map, K_bins=1, ss_blocks_bp=None,phen_map=None, lasso=False, sets=False, verbose=False):
+    plinkf = plinkfile.PlinkFile(genotype_file)
+    samples = plinkf.get_samples()
+
+    # 1. Figure out indiv filter and get true phenotypes
+    indiv_filter = sp.zeros(len(samples), dtype='bool8')
+    true_phens = []
+    iids = []
+    if phen_map is not None:
+        pcs = []
+        sex = []
+        covariates = []
+        phen_iids = set(phen_map.keys())
+        for samp_i, sample in enumerate(samples):
+            if sample.iid in phen_iids:
+                indiv_filter[samp_i] = True
+                true_phens.append(phen_map[sample.iid]['phen'])
+                iids.append(sample.iid)
+                if 'pcs' in phen_map[sample.iid].keys():
+                    pcs.append(phen_map[sample.iid]['pcs'])
+                if 'sex' in phen_map[sample.iid].keys():
+                    sex.append(phen_map[sample.iid]['sex'])
+                if 'covariates' in phen_map[sample.iid].keys():
+                    # Temp hack...
+                    #                     if phen_map[sample.iid]['sex']==1:
+                    #                         covariates.append([phen_map[sample.iid]['covariates'][0],0])
+                    #                     else:
+                    #                         covariates.append([0,phen_map[sample.iid]['covariates'][0]])
+                    covariates.append(phen_map[sample.iid]['covariates'])
+        if len(pcs) > 0:
+            assert len(pcs) == len(true_phens), 'PC information missing for some individuals with phenotypes'
+        if len(sex) > 0:
+            assert len(sex) == len(true_phens), 'Sex information missing for some individuals with phenotypes'
+        if len(covariates) > 0:
+            assert len(covariates) == len(true_phens), 'Covariates missing for some individuals with phenotypes'
+    else:
+        for samp_i, sample in enumerate(samples):
+            if sample.affection != 2:
+                indiv_filter[samp_i] = True
+                true_phens.append(sample.affection)
+                iids.append(sample.iid)
+
+    num_individs = sp.sum(indiv_filter)
+    assert num_individs > 0, 'Issues in parsing the phenotypes and/or PCs?'
+
+    assert not sp.any(sp.isnan(true_phens)), 'Phenotypes appear to have some NaNs, or parsing failed.'
+
+    print '%d individuals have phenotype and genotype information.' % num_individs
+
+    num_non_matching_nts = 0
+    num_flipped_nts = 0
+
+    raw_effects_prs = sp.zeros(num_individs)
+    pval_derived_effects_prs = sp.zeros(num_individs)
+    pval_derived_effects_prs_lasso = sp.zeros(num_individs)
+
+    bins_prs_dict = {}
+    if K_bins > 1:
+        bk = 1
+        while bk <= K_bins:
+            bins_prs_dict["prs_bin_%d" % bk] = sp.zeros(num_individs)
+            bk += 1
+
+
+    ### jackknife blocks
+    raw_effects_prs_blocks=sp.empty([num_individs,len(ss_blocks_bp)])
+    pval_derived_effects_prs_blocks=sp.empty([num_individs,len(ss_blocks_bp)])
+    n_jackkn_block=0
+
+    # If these indices are not in order then we place them in the right place while parsing SNPs.
+    print 'Iterating over BED file to calculate risk scores.'
+    locus_list = plinkf.get_loci()
+    snp_i = 0
+
+    bins_bounds = rs_id_map["bins_extremes"]
+    # print bins_bounds
+    for locus, row in it.izip(locus_list, plinkf):
+        upd_pval_beta = 0
+        try:
+            # Check rs-ID
+            #             sid = '%d_%d'%(locus.chromosome,locus.bp_position)
+            sid = locus.name
+            bp=locus.bp_position
+            rs_info = rs_id_map[sid]
+        except Exception:  # Move on if rsID not found.
+            continue
+
+
+        if rs_info['upd_pval_beta'] == 0:
+            continue
+
+        if ss_blocks_bp[n_jackkn_block][1]<int(bp):
+            raw_effects_prs_blocks[:,n_jackkn_block]=raw_effects_prs
+            pval_derived_effects_prs_blocks[:,n_jackkn_block]=pval_derived_effects_prs
+            n_jackkn_block=+1
+        else:
+            continue
+
+
+        # Check whether the nucleotides are OK, and potentially flip it.
+        ss_nt = rs_info['nts']
+        g_nt = [locus.allele1, locus.allele2]
+        flip_nts = False
+        os_g_nt = sp.array([opp_strand_dict[g_nt[0]], opp_strand_dict[g_nt[1]]])
+        if not (sp.all(g_nt == ss_nt) or sp.all(os_g_nt == ss_nt)):
+            # Opposite strand nucleotides
+            flip_nts = (g_nt[1] == ss_nt[0] and g_nt[0] == ss_nt[1]) or (
+            os_g_nt[1] == ss_nt[0] and os_g_nt[0] == ss_nt[1])
+            if flip_nts:
+                raw_beta = -rs_info['raw_beta']
+                upd_pval_beta = -rs_info['upd_pval_beta']
+                num_flipped_nts += 1
+
+            else:
+                # print "Nucleotides don't match after all?: sid=%s, g_nt=%s, ss_nt=%s" % (locus.name, str(g_nt), str(ss_nt))
+                num_non_matching_nts += 1
+                continue
+        else:
+            raw_beta = rs_info['raw_beta']
+            upd_pval_beta = rs_info['upd_pval_beta']
+
+
+        # Parse SNP, and fill in the blanks if necessary.
+        snp = sp.array(row, dtype='int8')[indiv_filter]
+        bin_counts = row.allele_counts()
+        if bin_counts[-1] > 0:
+            mode_v = sp.argmax(bin_counts[:2])
+            snp[snp == 3] = mode_v
+
+            # Normalize SNP
+        #         n_snp = (snp - sp.mean(snp))/sp.std(snp)
+        #         print(upd_pval_beta**2)
+        #         print sp.where(bins_bounds>=upd_pval_beta**2)
+        #         print sp.where(bins_bounds>=upd_pval_beta**2)[0][0]
+        bin_number = sp.where(bins_bounds >= upd_pval_beta ** 2)[0][0]
+        # Update scores and move on.
+        raw_effects_prs += snp * raw_beta
+        assert not sp.any(sp.isnan(raw_effects_prs)), 'Raw effects PRS is corrupted'
+        snpi_b = snp * upd_pval_beta
+        pval_derived_effects_prs += snpi_b
+        bins_prs_dict["prs_bin_%d" % bin_number] += snpi_b
+        assert not sp.any(sp.isnan(pval_derived_effects_prs)), 'Weighted effects PRS is corrupted'
+
+
+
+
+        if verbose:
+
+            if snp_i > 0 and snp_i % 500000 == 0:
+                print("PRS using %d SNPS" % snp_i)
+                # print 'Number of non-matching NTs: %d'%num_non_matching_nts
+                raw_eff_r2 = (sp.corrcoef(raw_effects_prs, true_phens)[0, 1]) ** 2
+                pval_eff_r2 = (sp.corrcoef(pval_derived_effects_prs, true_phens)[0, 1]) ** 2
+                print 'Raw effects PRS r2: %0.4f' % raw_eff_r2
+                print 'Weigted effects PRS r2: %0.4f' % pval_eff_r2
+
+        snp_i += 1
+
+    plinkf.close()
+
+    print "DONE!"
+    print 'Number of non-matching NTs: %d' % num_non_matching_nts
+    print 'Number of flipped NTs: %d' % num_flipped_nts
+    raw_eff_corr = sp.corrcoef(raw_effects_prs, true_phens)[0, 1]
+    raw_eff_r2 = raw_eff_corr ** 2
+    pval_eff_corr = sp.corrcoef(pval_derived_effects_prs, true_phens)[0, 1]
+    pval_eff_r2 = pval_eff_corr ** 2
+
+    print 'Raw effects PRS correlation: %0.4f' % raw_eff_corr
+    print 'Raw effects PRS r2: %0.4f' % raw_eff_r2
+    print 'Weigted effects PRS correlation: %0.4f' % pval_eff_corr
+    print 'Weigted effects PRS r2: %0.4f' % pval_eff_r2
+
+
+    ret_dict = {'raw_effects_prs': raw_effects_prs.copy(), 'pval_derived_effects_prs': pval_derived_effects_prs.copy(),
+                'true_phens': true_phens[:], 'iids': iids}
+
+    if K_bins > 1:
+        bk = 1
+        while bk <= K_bins:
+            ret_dict["pval_derived_effects_prs_bin_%d" % bk] = bins_prs_dict["prs_bin_%d" % bk].copy()
+            bk += 1
+
+    if len(pcs) > 0:
+        ret_dict['pcs'] = pcs
+    if len(sex) > 0:
+        ret_dict['sex'] = sex
+    if len(covariates) > 0:
+        ret_dict['covariates'] = covariates
+
+    return ret_dict
 
 
 def parse_phen_file(pf, pf_format):
@@ -622,6 +813,47 @@ def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,v
             prs_dict_bins["pval_derived_effects_prs_bin_%d"%bk]=sp.zeros(num_individs)
             bk+=1
 
+    # print prs_dict_bins.keys()
+    if bimfile_name is not None:
+        raw_effects_prs = sp.zeros(num_individs)
+        pval_derived_effects_prs = sp.zeros(num_individs)
+
+        bimf1 = re.sub(r"\[1:22\]", "[0-9]", bimfile_name)
+        bimf2 = re.sub(r"\[1:22\]", "[0-2][0-9]", bimfile_name)
+        bimfile_list = glob.glob(bimf1 + ".bim") + glob.glob(bimf2 + ".bim")
+        bimfile_list.sort(key=natural_keys)
+        chr_bp_dict={}
+        n_snps_bim=0
+        chroms=0
+        for bimfile in bimfile_list:
+            chroms=+1
+            chr_bp_dict["chr_%d"%chroms]=[]
+            with open(bimfile) as f:
+                for line in f:
+                    l = (line.strip()).split()
+                    chr_bp_dict["chr_%d" % chroms].append(int(l[3]))
+                n_snps_bim=+len(chr_bp_dict["chr_%d" % chroms])
+        block_size=int(n_snps_bim/200)
+        chr_block_bp_dict={}
+        for chroms in range(1,23):
+            chrom_length=len(chr_bp_dict["chr_%d"%chroms])
+            idx_block_chr=range(0,chrom_length,block_size)
+            chr_block_bp_dict["chr_%d"%chroms]=[]
+            for i in range(len(idx_block_chr)):
+                if i+1==len(idx_block_chr):
+                    bp_l=idx_block_chr[i]
+                    _last_block_=chr_bp_dict["chr_%d"%chroms][bp_l:]
+                    if len(_last_block_)<block_size/4:
+                        ### modify last block on the list and just put upper bound to be the last SNP
+                        chr_block_bp_dict["chr_%d" % chroms][-1][1]=chr_bp_dict["chr_%d"%chroms][-1]
+                    else:
+                        chr_block_bp_dict["chr_%d" % chroms].append([chr_bp_dict["chr_%d"%chroms][bp_l],chr_bp_dict["chr_%d"%chroms][-1]])
+
+                else:
+                    bp_l = idx_block_chr[i]
+                    bp_u = idx_block_chr[i+1]-1
+                    chr_block_bp_dict["chr_%d" % chroms].append([chr_bp_dict["chr_%d"%chroms][bp_l],chr_bp_dict["chr_%d"%chroms][bp_u]])
+
     #print prs_dict_bins.keys()
     if bimfile_name is not None:
         raw_effects_prs = sp.zeros(num_individs)
@@ -631,11 +863,12 @@ def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,v
         bimf2 = re.sub(r"\[1:22\]", "[0-2][0-9]", bimfile_name)
         bimfile_list=glob.glob(bimf1+".bim")+glob.glob(bimf2+".bim")
         bimfile_list.sort(key=natural_keys)
-
+        chroms = 0
         for bimfile in bimfile_list:
+            chroms = +1
             genotype_file = re.sub(r".bim", "", bimfile)
             print 'Get PRS on file %s' % bimfile
-            prs_dict = get_prs_bins(genotype_file, rs_id_map, phen_map=phen_map,K_bins=K_bins,verbose=verbose)
+            prs_dict = get_prs_bins_jackknife(genotype_file, rs_id_map, ss_blocks_bp=chr_block_bp_dict ,phen_map=phen_map,K_bins=K_bins,verbose=verbose)
 
             raw_effects_prs += prs_dict['raw_effects_prs']
             pval_derived_effects_prs += prs_dict['pval_derived_effects_prs']
@@ -735,17 +968,7 @@ def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,v
     weights_dict = {}
 
 
-    # Now calibration
-    y_norm = (true_phens - sp.mean(true_phens)) / sp.std(true_phens)
-    denominator = sp.dot(raw_effects_prs.T, raw_effects_prs)
-    numerator = sp.dot(raw_effects_prs.T, y_norm)
-    regression_slope = (numerator / denominator)[0][0]
-    print 'The slope for predictions with raw effects is:', regression_slope
 
-    denominator = sp.dot(pval_derived_effects_prs.T, pval_derived_effects_prs)
-    numerator = sp.dot(pval_derived_effects_prs.T, y_norm)
-    regression_slope = (numerator / denominator)[0][0]
-    print 'The slope for predictions with weighted effects is:', regression_slope
 
     #     print sp.corrcoef(prs_dict['raw_effects_prs'], prs_dict['true_phens'])[0,1]
     #     print sp.corrcoef(prs_dict['pval_derived_effects_prs'], prs_dict['true_phens'])[0,1]
@@ -815,7 +1038,7 @@ def main():
             weights_file = '%s_LDpred-inf.txt' % (p_dict['rf'])
         print(weights_file)
         if os.path.isfile(weights_file):
-            K_bins=int(min(100,math.ceil((0.9*num_individs)/300)))
+            K_bins=int(min(100,math.ceil((0.9*num_individs)/300))) ### old definition of bins, please use ldpredfunct.py with flag --validate-only instead
             if K_bins>1:
                 out_file = '%s_validation_LDpred-funct_%d_bins.txt' % (p_dict['out'], K_bins)
             else:
