@@ -103,3 +103,6 @@ For UK Biobank analysis described in [Marquez-Luna, et al, "Modeling functional 
 
 #### Acknowledgments
 We used LDpred software developed by Bjarni Vilhjalmsson as basis for this software.
+
+#### Contact
+Please first submit your question in the issues section, since this questions can be useful for other users as well. Otherwise, you can contact me at 
