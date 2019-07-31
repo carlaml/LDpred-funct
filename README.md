@@ -106,3 +106,5 @@ We used LDpred software developed by Bjarni Vilhjalmsson as basis for this softw
 
 #### Contact
 Please first submit your question in the issues section, since this questions can be useful for other users as well. Otherwise, you can contact me at 
+![info](https://github.com/carlaml/LDpred-funct/blob/master/contact_info.png)
+
