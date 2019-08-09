@@ -210,6 +210,8 @@ def ldpred_funct_genomewide(data_file=None, ld_radius = None, out_file_prefix=No
 
     if ld_radius==None:
         ld_window=int(round((0.15/100)*m)- round((0.15/100)*m)%100) ### set window size to a close number
+        if round((0.15/100)*m)<100:
+            ld_window=100
     else:
         ld_window=int(2 * ld_radius)
 
