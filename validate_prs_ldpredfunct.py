@@ -682,7 +682,7 @@ def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,v
             bin_eff_r2 = bin_in_sample_eff_corr ** 2
             bin_eff_r2_arr.append(bin_eff_r2)
 
-        print 'Final 10-fold cross validation LDpredfunct (%d bins) PRS average R2 (SD): %0.4f ( %0.4f) ' % (K_bins, sp.mean(bin_eff_r2_arr),sp.std(bin_eff_r2_arr)/sp.sqrt(10))
+        print 'Final 10-fold cross validation LDpredfunct (%d bins) PRS average R2 (SD): %0.4f ' % (K_bins, sp.mean(bin_eff_r2_arr))
 
 
 
