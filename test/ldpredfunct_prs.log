@@ -1,0 +1,473 @@
+{'ld_radius': None, 'posterior_means': 'test/ldpredfunct_posterior_means', 'verbose': False, 'skip_coordination': False, 'K': None, 'maf': 0.01, 'H2': 1.0, 'coord': 'test/Coord_Final', 'N': 100, 'gmdir': None, 'gf': 'test/TSI_[1:22]', 'chisq': False, 'pf': 'test/TSI_simulated_trait.txt', 'skip_ambiguous': False, 'simulations': False, 'validate_only': False, 'ssf': 'test/summary_statistics_traininig.txt', 'FUNCT_FILE': 'test/test_functfile.txt', 'check_mafs': False, 'out': 'test/ldpredfunct_prs'}
+Step 1: Coordinate summary statistics, genotype and functional enrichments files.
+
+['test/TSI_1.bim', 'test/TSI_2.bim', 'test/TSI_3.bim', 'test/TSI_4.bim', 'test/TSI_5.bim', 'test/TSI_6.bim', 'test/TSI_7.bim', 'test/TSI_8.bim', 'test/TSI_9.bim', 'test/TSI_10.bim', 'test/TSI_11.bim', 'test/TSI_12.bim', 'test/TSI_13.bim', 'test/TSI_14.bim', 'test/TSI_15.bim', 'test/TSI_16.bim', 'test/TSI_17.bim', 'test/TSI_18.bim', 'test/TSI_19.bim', 'test/TSI_20.bim', 'test/TSI_21.bim', 'test/TSI_22.bim']
+Parsing SNP list
+Parsing bim file: test/TSI_1.bim
+Parsing bim file: test/TSI_2.bim
+Parsing bim file: test/TSI_3.bim
+Parsing bim file: test/TSI_4.bim
+Parsing bim file: test/TSI_5.bim
+Parsing bim file: test/TSI_6.bim
+Parsing bim file: test/TSI_7.bim
+Parsing bim file: test/TSI_8.bim
+Parsing bim file: test/TSI_9.bim
+Parsing bim file: test/TSI_10.bim
+Parsing bim file: test/TSI_11.bim
+Parsing bim file: test/TSI_12.bim
+Parsing bim file: test/TSI_13.bim
+Parsing bim file: test/TSI_14.bim
+Parsing bim file: test/TSI_15.bim
+Parsing bim file: test/TSI_16.bim
+Parsing bim file: test/TSI_17.bim
+Parsing bim file: test/TSI_18.bim
+Parsing bim file: test/TSI_19.bim
+Parsing bim file: test/TSI_20.bim
+Parsing bim file: test/TSI_21.bim
+Parsing bim file: test/TSI_22.bim
+Total 697393 SNPs in all genotypes files.
+Parsing the SNP-Heritability file: test/test_functfile.txt
+V2	h2snp
+
+Get intersection between SNPs in genotypes file and functional enrichments file.
+22000 found in both files
+Parsing the summary statistics file: test/summary_statistics_traininig.txt
+0 SNPs with p-value rounded to zero in summary statistics file
+SS file loaded, now sorting and storing in HDF5 file.
+1000 SNPs on chromosome 1
+Still 1000 SNPs on chromosome 1
+1000 SNPs on chromosome 2
+Still 1000 SNPs on chromosome 2
+1000 SNPs on chromosome 3
+Still 1000 SNPs on chromosome 3
+1000 SNPs on chromosome 4
+Still 1000 SNPs on chromosome 4
+1000 SNPs on chromosome 5
+Still 1000 SNPs on chromosome 5
+1000 SNPs on chromosome 6
+Still 1000 SNPs on chromosome 6
+1000 SNPs on chromosome 7
+Still 1000 SNPs on chromosome 7
+1000 SNPs on chromosome 8
+Still 1000 SNPs on chromosome 8
+1000 SNPs on chromosome 9
+Still 1000 SNPs on chromosome 9
+1000 SNPs on chromosome 10
+Still 1000 SNPs on chromosome 10
+1000 SNPs on chromosome 11
+Still 1000 SNPs on chromosome 11
+1000 SNPs on chromosome 12
+Still 1000 SNPs on chromosome 12
+1000 SNPs on chromosome 13
+Still 1000 SNPs on chromosome 13
+1000 SNPs on chromosome 14
+Still 1000 SNPs on chromosome 14
+1000 SNPs on chromosome 15
+Still 1000 SNPs on chromosome 15
+1000 SNPs on chromosome 16
+Still 1000 SNPs on chromosome 16
+1000 SNPs on chromosome 17
+Still 1000 SNPs on chromosome 17
+1000 SNPs on chromosome 18
+Still 1000 SNPs on chromosome 18
+1000 SNPs on chromosome 19
+Still 1000 SNPs on chromosome 19
+1000 SNPs on chromosome 20
+Still 1000 SNPs on chromosome 20
+1000 SNPs on chromosome 21
+Still 1000 SNPs on chromosome 21
+1000 SNPs on chromosome 22
+Still 1000 SNPs on chromosome 22
+22000 SNPs parsed from summary statistics file.
+Coordinating summary statistics and genotypes
+Unable to find phenotype values.
+Working on chromsome: chrom_1
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+79 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+921 SNPs were retained on chromosome 1.
+Now storing coordinated data to HDF5 file from chrom_1
+Working on chromsome: chrom_2
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+82 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+918 SNPs were retained on chromosome 2.
+Now storing coordinated data to HDF5 file from chrom_2
+Working on chromsome: chrom_3
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+79 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+921 SNPs were retained on chromosome 3.
+Now storing coordinated data to HDF5 file from chrom_3
+Working on chromsome: chrom_4
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+76 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+924 SNPs were retained on chromosome 4.
+Now storing coordinated data to HDF5 file from chrom_4
+Working on chromsome: chrom_5
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+72 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+928 SNPs were retained on chromosome 5.
+Now storing coordinated data to HDF5 file from chrom_5
+Working on chromsome: chrom_6
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+72 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+928 SNPs were retained on chromosome 6.
+Now storing coordinated data to HDF5 file from chrom_6
+Working on chromsome: chrom_7
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+95 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+905 SNPs were retained on chromosome 7.
+Now storing coordinated data to HDF5 file from chrom_7
+Working on chromsome: chrom_8
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+86 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+914 SNPs were retained on chromosome 8.
+Now storing coordinated data to HDF5 file from chrom_8
+Working on chromsome: chrom_9
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+90 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+910 SNPs were retained on chromosome 9.
+Now storing coordinated data to HDF5 file from chrom_9
+Working on chromsome: chrom_10
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+71 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+929 SNPs were retained on chromosome 10.
+Now storing coordinated data to HDF5 file from chrom_10
+Working on chromsome: chrom_11
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+70 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+930 SNPs were retained on chromosome 11.
+Now storing coordinated data to HDF5 file from chrom_11
+Working on chromsome: chrom_12
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+74 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+926 SNPs were retained on chromosome 12.
+Now storing coordinated data to HDF5 file from chrom_12
+Working on chromsome: chrom_13
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+85 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+915 SNPs were retained on chromosome 13.
+Now storing coordinated data to HDF5 file from chrom_13
+Working on chromsome: chrom_14
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+82 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+918 SNPs were retained on chromosome 14.
+Now storing coordinated data to HDF5 file from chrom_14
+Working on chromsome: chrom_15
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+80 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+920 SNPs were retained on chromosome 15.
+Now storing coordinated data to HDF5 file from chrom_15
+Working on chromsome: chrom_16
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+91 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+909 SNPs were retained on chromosome 16.
+Now storing coordinated data to HDF5 file from chrom_16
+Working on chromsome: chrom_17
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+60 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+940 SNPs were retained on chromosome 17.
+Now storing coordinated data to HDF5 file from chrom_17
+Working on chromsome: chrom_18
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+80 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+920 SNPs were retained on chromosome 18.
+Now storing coordinated data to HDF5 file from chrom_18
+Working on chromsome: chrom_19
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+63 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+937 SNPs were retained on chromosome 19.
+Now storing coordinated data to HDF5 file from chrom_19
+Working on chromsome: chrom_20
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+86 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+914 SNPs were retained on chromosome 20.
+Now storing coordinated data to HDF5 file from chrom_20
+Working on chromsome: chrom_21
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+73 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+927 SNPs were retained on chromosome 21.
+Now storing coordinated data to HDF5 file from chrom_21
+Working on chromsome: chrom_22
+Bim file information loaded
+Found 1000 SNPs present in both genotype and summary statistics datasets
+68 SNPs were excluded due to ambiguous nucleotides.
+0 SNPs were excluded due to non-matching nucleotides.
+Iterating over file to genotypes
+932 SNPs were retained on chromosome 22.
+Now storing coordinated data to HDF5 file from chrom_22
+There were 20286 SNPs in common
+In all, 1714 SNPs were excluded due to nucleotide issues.
+Done coordinating genotypes and summary statistics datasets.
+Step 2: Compute posterior mean effect sizes using a functional prior.
+Total number of SNPs: 20286
+LD window size: 100
+Normalizing constant for an h2g of 1.0000e+00 is set to be 1.084679167364e+00
+Calculating posterior means for chromosome 1
+Calculating posterior means for chromosome 10
+Calculating posterior means for chromosome 11
+Calculating posterior means for chromosome 12
+Calculating posterior means for chromosome 13
+Calculating posterior means for chromosome 14
+Calculating posterior means for chromosome 15
+Calculating posterior means for chromosome 16
+Calculating posterior means for chromosome 17
+Calculating posterior means for chromosome 18
+Calculating posterior means for chromosome 19
+Calculating posterior means for chromosome 2
+Calculating posterior means for chromosome 20
+Calculating posterior means for chromosome 21
+Calculating posterior means for chromosome 22
+Calculating posterior means for chromosome 3
+Calculating posterior means for chromosome 4
+Calculating posterior means for chromosome 5
+Calculating posterior means for chromosome 6
+Calculating posterior means for chromosome 7
+Calculating posterior means for chromosome 8
+Calculating posterior means for chromosome 9
+ Writing file test/ldpredfunct_posterior_means_LDpred-inf-ldscore.txt
+Step 3: Compute polygenic risk score using previously computed posterior mean effect sizes.
+test/TSI_simulated_trait.txt
+Parsing phenotypes
+<open file 'test/TSI_simulated_trait.txt', mode 'r' at 0x105ee4660>
+Reading test/ldpredfunct_posterior_means_LDpred-inf-ldscore.txt
+Get PRS on file test/TSI_1.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.1191
+Weigted effects PRS r2: 0.0142
+Get PRS on file test/TSI_2.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.1267
+Weigted effects PRS r2: 0.0161
+Get PRS on file test/TSI_3.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.1207
+Weigted effects PRS r2: 0.0146
+Get PRS on file test/TSI_4.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.2039
+Weigted effects PRS r2: 0.0416
+Get PRS on file test/TSI_5.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.1430
+Weigted effects PRS r2: 0.0205
+Get PRS on file test/TSI_6.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.1019
+Weigted effects PRS r2: 0.0104
+Get PRS on file test/TSI_7.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.0076
+Weigted effects PRS r2: 0.0001
+Get PRS on file test/TSI_8.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.1077
+Weigted effects PRS r2: 0.0116
+Get PRS on file test/TSI_9.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.1982
+Weigted effects PRS r2: 0.0393
+Get PRS on file test/TSI_10.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0041
+Weigted effects PRS r2: 0.0000
+Get PRS on file test/TSI_11.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.0206
+Weigted effects PRS r2: 0.0004
+Get PRS on file test/TSI_12.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0338
+Weigted effects PRS r2: 0.0011
+Get PRS on file test/TSI_13.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.1192
+Weigted effects PRS r2: 0.0142
+Get PRS on file test/TSI_14.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.0529
+Weigted effects PRS r2: 0.0028
+Get PRS on file test/TSI_15.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.0841
+Weigted effects PRS r2: 0.0071
+Get PRS on file test/TSI_16.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0631
+Weigted effects PRS r2: 0.0040
+Get PRS on file test/TSI_17.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0921
+Weigted effects PRS r2: 0.0085
+Get PRS on file test/TSI_18.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0971
+Weigted effects PRS r2: 0.0094
+Get PRS on file test/TSI_19.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0871
+Weigted effects PRS r2: 0.0076
+Get PRS on file test/TSI_20.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0457
+Weigted effects PRS r2: 0.0021
+Get PRS on file test/TSI_21.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: -0.0078
+Weigted effects PRS r2: 0.0001
+Get PRS on file test/TSI_22.bim
+88 individuals have phenotype and genotype information.
+Iterating over BED file to calculate risk scores.
+DONE!
+Number of non-matching NTs: 0
+Number of flipped NTs: 0
+Weigted effects PRS correlation: 0.0258
+Weigted effects PRS r2: 0.0007
+Final LDpred-funct-inf PRS correlation: 0.1173
+Final LDpred-funct-inf  PRS r2: 0.0138
+Since the selected/calculated number of bins is 1, LDpred-funct equals to LDpred-funct-inf

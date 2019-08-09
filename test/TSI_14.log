@@ -1,0 +1,45 @@
+
+@----------------------------------------------------------@
+|        PLINK!       |     v1.07      |   10/Aug/2009     |
+|----------------------------------------------------------|
+|  (C) 2009 Shaun Purcell, GNU General Public License, v2  |
+|----------------------------------------------------------|
+|  For documentation, citation & bug-report instructions:  |
+|        http://pngu.mgh.harvard.edu/purcell/plink/        |
+@----------------------------------------------------------@
+
+Skipping web check... [ --noweb ] 
+Writing this text to log file [ test/TSI_14.log ]
+Analysis started: Fri Aug  9 12:19:31 2019
+
+Options in effect:
+	--noweb
+	--file TSI
+	--chr 14
+	--alleleACGT
+	--make-bed
+	--out test/TSI_14
+
+717147 (of 717147) markers to be included from [ TSI.map ]
+Scan region on chromosome 14 from [ rs4983173 ] to [ rs7144412 ]
+88 individuals read from [ TSI.ped ] 
+88 individuals with nonmissing phenotypes
+Assuming a disease phenotype (1=unaff, 2=aff, 0=miss)
+Missing phenotype value is also -9
+0 cases, 88 controls and 0 missing
+44 males, 44 females, and 0 of unspecified sex
+Before frequency and genotyping pruning, there are 22888 SNPs
+88 founders and 0 non-founders found
+Total genotyping rate in remaining individuals is 0.998305
+0 SNPs failed missingness test ( GENO > 1 )
+0 SNPs failed frequency test ( MAF < 0 )
+After frequency and genotyping pruning, there are 22888 SNPs
+After filtering, 0 cases, 88 controls and 0 missing
+After filtering, 44 males, 44 females, and 0 of unspecified sex
+Writing pedigree information to [ test/TSI_14.fam ] 
+Writing map (extended format) information to [ test/TSI_14.bim ] 
+Writing genotype bitfile to [ test/TSI_14.bed ] 
+Using (default) SNP-major mode
+
+Analysis finished: Fri Aug  9 12:19:58 2019
+
