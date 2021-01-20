@@ -11,6 +11,10 @@ import math
 import validate_prs_ldpredfunct as prs
 import coord_genotypes_ldpredfunct_v1_2 as coord
 import LDpredfunct_bayes_shrink as ldpredfunct
+import timeit
+import time
+
+
 ambig_nts = set([('A', 'T'), ('T', 'A'), ('G', 'C'), ('C', 'G')])
 opp_strand_dict = {'A':'T', 'G':'C', 'T':'A', 'C':'G'}
 
@@ -27,9 +31,9 @@ def parse_parameters():
     #        sys.exit(2)
 
 
-    long_options_list = ['validate_only','simulations','FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination','verbose', 'skip_ambiguous',"chisq", 'ssf=', 'N=',"K=", "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf="]
+    long_options_list = ['FUNCT_same_h2gi','validate_only','simulations','FUNCT_FILE=','gf=', 'gmdir=', 'check_mafs', 'coord=', 'maf=', 'skip_coordination','verbose', 'skip_ambiguous',"chisq", 'ssf=', 'N=',"K=", "posterior_means=", 'ld_radius=', 'H2=', 'out=',"pf=","print-weights"]
 
-    p_dict = {'validate_only':False,'simulations':False,'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01,'K':None,"chisq":False,  'skip_coordination':False, 'skip_ambiguous':False,
+    p_dict = {'FUNCT_same_h2gi':False,'validate_only':False,'print-weights':False,'simulations':False,'FUNCT_FILE':None,'gf':None, 'gmdir':None, 'check_mafs':False, "coord":"output-coordinated", 'maf':0.01,'K':None,"chisq":False,  'skip_coordination':False, 'skip_ambiguous':False,
     'ssf':None, 'N':None, "posterior_means":"output-posterior_means", 'ld_radius':None, 'H2':None,'verbose':False, 'out':"output-prs","pf":None}
 
     if len(sys.argv) == 1:
@@ -65,6 +69,8 @@ def parse_parameters():
                 p_dict['verbose'] = True
             elif opt in ("--validate_only"):
                 p_dict['validate_only'] = True
+            elif opt in ("--print-weights"):
+                p_dict['print_weights_funct'] = True
             elif opt in ("--simulations"):
                 p_dict['simulations'] = True
             elif opt in ("--chisq"):
@@ -77,6 +83,8 @@ def parse_parameters():
                 p_dict['K'] = arg
             elif opt in ("--FUNCT_FILE"):
                 p_dict['FUNCT_FILE'] = arg
+            elif opt in ("--FUNCT_same_h2gi"):
+                p_dict['FUNCT_same_h2gi'] = True
             elif opt in ("--N"):
                 p_dict['N'] = int(arg)
             elif opt in ("--posterior_means"): p_dict['posterior_means'] = arg
@@ -150,62 +158,41 @@ def main():
                 out_file = '%s_validation_LDpred-funct_%d_bins.txt' % (p_dict['out'], K_bins)
             else:
                 out_file = '%s_validation_LDpred-funct_inf.txt' % (p_dict['out'])
+            start = time.time()
             rsid_map = prs.parse_ldpred_res_bins(weights_file, K_bins=K_bins)
-            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map, K_bins=K_bins, out_file=out_file,
-                                 verbose=p_dict['verbose'])
-    elif p_dict['simulations']:
-        print("Step 1: Coordinate summary statistics, genotype and functional enrichments files.\n")
-        coord.parse_sum_stats_standard_ldscore(filename=p_dict['ssf'], bimfile_name=p_dict['gf'], hdf5_file_name=p_dict['coord'],
-                                         n=p_dict['N'],
-                                         outfile=p_dict['coord'] + "_snps_NaN.txt", FUNCT_FILE=p_dict["FUNCT_FILE"],CHISQ=p_dict['chisq'])
-        ssf_dict=coord.coordinate_ss(genotype_file=p_dict['gf'],hdf5_file=p_dict['coord'],genetic_map_dir=p_dict['gmdir'],check_mafs=p_dict['check_mafs'],skip_coordination=p_dict['skip_coordination'],skip_ambiguous=p_dict['skip_ambiguous'])
-        print("Step 2: Compute posterior mean effect sizes using a functional prior.")
-        ldpredfunct.ldpred_funct_genomewide(data_file=p_dict['coord'], out_file_prefix=p_dict['posterior_means'],
-                                        ld_radius=p_dict['ld_radius'],
-                                        n=p_dict['N'], h2=p_dict['H2'], verbose=p_dict['verbose'], simulation = True, ssf_dict = ssf_dict)
-
-        print("Step 3: Compute polygenic risk score using previously computed posterior mean effect sizes.")
-
-        if p_dict['pf'] is None:
-            if p_dict['gf'] is not None:
-                phen_map = prs.parse_phen_file(p_dict['gf']+'.fam', 'FAM')
-            else:
-                raise Exception('Validation phenotypes were not found.')
-        else:
-            phen_map = prs.parse_phen_file(p_dict['pf'],'STANDARD')
-        iids = set(phen_map.keys())
-        num_individs = len(phen_map)
-        assert num_individs>0, 'No phenotypes were found!'
-
-        weights_file = '%s_LDpred-inf-ldscore.txt' % (p_dict['posterior_means'])
-        print("Reading %s"%weights_file)
-        if os.path.isfile(weights_file):
-            if p_dict['K']==None:
-                #K_bins=int(min(100,math.ceil((0.9*num_individs)/300)))
-                K_bins = int(min(100, math.ceil((0.9 * num_individs)*float(p_dict['H2'])*0.01 )))
-
-            else:
-                K_bins=int(p_dict['K'])
-            if K_bins>1:
-                out_file = '%s_validation_LDpred-funct_%d_bins.txt' % (p_dict['out'], K_bins)
-            else:
-                out_file = '%s_validation_LDpred-funct_inf.txt' % (p_dict['out'])
-            rsid_map=prs.parse_ldpred_res_bins(weights_file, K_bins=K_bins)
-            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'])
-
+            stop = time.time()
+            print('Time total for dividing bins PRS: ', stop - start)
+            #start = time.time()
+            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map, K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'],weights_file=weights_file,print_effects=p_dict['print_weights_funct'])
+            #stop = time.time()
+            #print('Time total for PRS: ', stop - start)
     else:
         print("Step 1: Coordinate summary statistics, genotype and functional enrichments files.\n")
+        start = time.time()
         coord.parse_sum_stats_standard_ldscore(filename=p_dict['ssf'], bimfile_name=p_dict['gf'], hdf5_file_name=p_dict['coord'],
                                          n=p_dict['N'],
-                                         outfile=p_dict['coord'] + "_snps_NaN.txt", FUNCT_FILE=p_dict["FUNCT_FILE"],CHISQ=p_dict['chisq'])
-
+                                         outfile=p_dict['coord'] + "_snps_NaN.txt", FUNCT_FILE=p_dict["FUNCT_FILE"],CHISQ=p_dict['chisq'],FUNCT_same_h2gi=p_dict['FUNCT_same_h2gi'],h2g=p_dict['H2'])
+        stop = time.time()
+        t=stop - start
+        print('Time total for Coord summary stats: %d minutes and %0.2f seconds'% (t / 60, t % 60))
+        start = time.time()
         coord.coordinate_genot_ss(genotype_filename=p_dict['gf'], genetic_map_dir=p_dict['gmdir'], check_mafs=p_dict['check_mafs'],
                         hdf5_file_name=p_dict['coord'], min_maf=p_dict['maf'], skip_coordination=p_dict['skip_coordination'],
                         method="STANDARD_FUNCT", skip_ambiguous=p_dict['skip_ambiguous'])
+        stop = time.time()
+        t=stop - start
+        print('Time total for Coord Step: %d minutes and %0.2f seconds'% (t / 60, t % 60))
 
         print("Step 2: Compute posterior mean effect sizes using a functional prior.")
+        start = time.time()
+        #start = timeit.default_timer()
         ldpredfunct.ldpred_funct_genomewide(data_file=p_dict['coord'], out_file_prefix=p_dict['posterior_means'], ld_radius=p_dict['ld_radius'],
                               n=p_dict['N'],h2=p_dict['H2'],verbose=p_dict['verbose'])
+        stop = time.time()
+        #stop = timeit.default_timer()
+        print('Time Start: ', start)
+        print('Time Start: ', stop)
+        print('Time total: ', stop - start)
 
         print("Step 3: Compute polygenic risk score using previously computed posterior mean effect sizes.")
 
@@ -232,8 +219,15 @@ def main():
                 out_file = '%s_validation_LDpred-funct_%d_bins.txt' % (p_dict['out'], K_bins)
             else:
                 out_file = '%s_validation_LDpred-funct_inf.txt' % (p_dict['out'])
+            start = time.time()
             rsid_map=prs.parse_ldpred_res_bins(weights_file, K_bins=K_bins)
-            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'])
+            stop = time.time()
+            #print('Time total for dividing bins PRS: ', stop - start)
+
+            #start = time.time()
+            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'],weights_file=weights_file,print_effects=p_dict['print_weights_funct'])
+            #stop = time.time()
+            #print('Time total for PRS: ', stop - start)
 
 
 if __name__ == '__main__':
