@@ -132,6 +132,56 @@ def parse_ldpred_res_bins(file_name,K_bins=1):
     return rs_id_map
 
 
+
+def parse_ldpred_res_bins_regularized(file_name,weights_out_file,weights,rs_id_map ):
+    """
+    chrom    pos    sid    nt1    nt2    raw_beta    ldpred_inf_beta    ldpred_beta
+    1, 798959, rs11240777, C, T, -1.1901e-02, 3.2443e-03, 2.6821e-04
+    """
+    bins_bounds = rs_id_map["bins_extremes"]
+    chromosomes=[]
+    positions=[]
+    sids=[]
+    nts=[]
+    raw_effect_sizes=[]
+    shrink_upd_effect_sizes=[]
+    bin_number_list=[]
+    with open(file_name,'r') as f:
+        f.next()
+        for line in f:
+            l = line.split()
+            chrom_str = l[0]
+            chrom = int(chrom_str[6:])
+            pos = int(l[1])
+            rs_id = l[2].strip()
+            nt1 = l[3].strip()
+            nt2 = l[4].strip()
+            raw_beta = float(l[5])
+            upd_pval_beta = float(l[6])
+            bin_number = sp.where(bins_bounds >= upd_pval_beta ** 2)[0][0]
+            shrink_upd_pval_beta = weights[bin_number] * float(l[6])
+
+            chromosomes.append(chrom_str)
+            positions.append(pos)
+            sids.append(rs_id)
+            nts.append([nt1,nt2])
+            raw_effect_sizes.append(raw_beta)
+            shrink_upd_effect_sizes.append(shrink_upd_pval_beta)
+            bin_number_list.append(bin_number)
+    f.close()
+
+    with open(weights_out_file, 'w') as fw:
+        for chrom, pos, sid, nt, raw_beta, ldpred_beta in it.izip(chromosomes, positions, sids, nts,
+                                                              raw_effect_sizes, shrink_upd_effect_sizes):
+            nt1, nt2 = nt[0], nt[1]
+            fw.write('%s    %d    %s    %s    %s    %0.4e    %0.4e\n' % (chrom, pos, sid, nt1, nt2, raw_beta, ldpred_beta))
+        fw.close()
+
+
+
+
+
+
 def get_prs_bins(genotype_file, rs_id_map, K_bins=1,phen_map=None,lasso=False,sets=False,verbose=False):
     plinkf = plinkfile.PlinkFile(genotype_file)
     samples = plinkf.get_samples()
@@ -195,7 +245,7 @@ def get_prs_bins(genotype_file, rs_id_map, K_bins=1,phen_map=None,lasso=False,se
             bins_prs_dict["prs_bin_%d" % bk] = sp.zeros(num_individs)
             bk += 1
         
-
+    #print(bins_prs_dict.keys())
     #Sets
     pval_derived_effects_prs_high = sp.zeros(num_individs)
     pval_derived_effects_prs_lasso_high = sp.zeros(num_individs)
@@ -365,8 +415,6 @@ def get_prs_bins(genotype_file, rs_id_map, K_bins=1,phen_map=None,lasso=False,se
     return ret_dict
 
 
-
-
 def parse_phen_file(pf, pf_format):
     print pf
     phen_map ={}
@@ -426,7 +474,6 @@ def parse_phen_file(pf, pf_format):
                         raise Exception('Sex missing')
                     phen = float(l[3])
                     phen_map[iid] = {'phen':phen, 'age':age, 'sex':sex}
-
     return phen_map
 
 def parse_ldpred_res_beta2_up(file_name,betathresh=None):
@@ -520,6 +567,7 @@ def parse_ldpred_res_beta2_low(file_name,betathresh=None):
                                 'upd_pval_beta':upd_pval_beta}
     print "Number of SNPs in block: There are %d SNPs with beta less than %0.10f"%(nsnps,betathresh)
     return rs_id_map
+
 def parse_ldpred_res(file_name):
     rs_id_map = {}
     """
@@ -583,7 +631,7 @@ def natural_keys(text):
 
 
 
-def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,verbose=False):
+def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,verbose=False,cv_10fold=True,weights_file=None,print_effects=False):
     num_individs = len(phen_map)
     assert num_individs > 0, 'No individuals found.  Problems parsing the phenotype file?'
     #print K_bins
@@ -629,12 +677,19 @@ def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,v
     print 'Final LDpred-funct-inf PRS correlation: %0.4f' % pval_eff_corr
     print 'Final LDpred-funct-inf  PRS r2: %0.4f' % pval_eff_r2
 
+    if K_bins==1:
+        print "Since the selected/calculated number of bins is 1, LDpred-funct equals to LDpred-funct-inf"
+
+
+    cv_effects_dir={}
     if K_bins > 1:
         X=sp.ones((num_individs, 1))
         bk = 1
         while bk <= K_bins:
             prs_dict_bins["pval_derived_effects_prs_bin_%d" % bk].shape = (len(prs_dict_bins["pval_derived_effects_prs_bin_%d" % bk]), 1)
-            X=sp.hstack([prs_dict_bins["pval_derived_effects_prs_bin_%d" % bk], X])
+            X=sp.hstack([X,prs_dict_bins["pval_derived_effects_prs_bin_%d" % bk]])
+            #print(bk)
+            #print(X[0:5,])
             bk+=1
 
         true_phens = sp.array(true_phens)
@@ -654,35 +709,39 @@ def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,v
         print 'Final in-sample LDpredfunct (%d bins) PRS adjusted-R2: %0.4f' % (K_bins, 1-(1-bin_eff_r2)*(len(true_phens)-1)/(len(true_phens)-K_bins-1) )
 
         ###
+        if cv_10fold:
+            test_size= len(true_phens)
+            cv_fold_size = int(test_size / 10)
+            bound_cv_test = []
+            for k in range(10):
+                bound_cv_test.append(k * cv_fold_size)
+            bound_cv_test.append(test_size - 1)
+            bin_eff_r2_arr=[]
+            for cv_iter in range(10):
+                Xtrain=sp.copy(X)
+                Xtest=sp.copy(X)
+                Ytrain=sp.copy(true_phens)
+                Ytest=sp.copy(true_phens)
 
-        test_size= len(true_phens)
-        cv_fold_size = int(test_size / 10)
-        bound_cv_test = []
-        for k in range(10):
-            bound_cv_test.append(k * cv_fold_size)
-        bound_cv_test.append(test_size - 1)
-        bin_eff_r2_arr=[]
-        for cv_iter in range(10):
-            Xtrain=sp.copy(X)
-            Xtest=sp.copy(X)
-            Ytrain=sp.copy(true_phens)
-            Ytest=sp.copy(true_phens)
+                Xtest=Xtest[bound_cv_test[cv_iter]:bound_cv_test[cv_iter+1],]
+                Ytest=Ytest[bound_cv_test[cv_iter]:bound_cv_test[cv_iter+1]]
 
-            Xtest=Xtest[bound_cv_test[cv_iter]:bound_cv_test[cv_iter+1],]
-            Ytest=Ytest[bound_cv_test[cv_iter]:bound_cv_test[cv_iter+1]]
+                Xtrain=sp.delete(Xtrain,range(bound_cv_test[cv_iter],bound_cv_test[cv_iter+1]),0)
+                Ytrain = sp.delete(Ytrain,range(bound_cv_test[cv_iter],bound_cv_test[cv_iter+1]),0)
+                (betas, rss0, r, s) = linalg.lstsq(Xtrain, Ytrain)
+                Y_pred = sp.dot(Xtest, betas)
+                Y_pred.shape = (len(Ytest),)
+                Ytest.shape = (len(Ytest),)
+                # Report prediction accuracy
+                bin_in_sample_eff_corr = sp.corrcoef(Y_pred, Ytest)[0, 1]
+                bin_eff_r2 = bin_in_sample_eff_corr ** 2
+                bin_eff_r2_arr.append(bin_eff_r2)
+                if print_effects:
+                    cv_effects_dir["cv_%d"%cv_iter]=bin_eff_r2_arr
+                    parse_ldpred_res_bins_regularized(weights_file, weights_out_file=weights_file+"cv_%d.txt"%cv_iter, weights=betas, rs_id_map=rs_id_map)
 
-            Xtrain=sp.delete(Xtrain,range(bound_cv_test[cv_iter],bound_cv_test[cv_iter+1]),0)
-            Ytrain = sp.delete(Ytrain,range(bound_cv_test[cv_iter],bound_cv_test[cv_iter+1]),0)
-            (betas, rss0, r, s) = linalg.lstsq(Xtrain, Ytrain)
-            Y_pred = sp.dot(Xtest, betas)
-            Y_pred.shape = (len(Ytest),)
-            Ytest.shape = (len(Ytest),)
-            # Report prediction accuracy
-            bin_in_sample_eff_corr = sp.corrcoef(Y_pred, Ytest)[0, 1]
-            bin_eff_r2 = bin_in_sample_eff_corr ** 2
-            bin_eff_r2_arr.append(bin_eff_r2)
 
-        print 'Final 10-fold cross validation LDpredfunct (%d bins) PRS average R2 : %0.4f ' % (K_bins, sp.mean(bin_eff_r2_arr))
+            print 'Final 10-fold cross validation LDpredfunct (%d bins) PRS average R2 : %0.4f ' % (K_bins, sp.mean(bin_eff_r2_arr))
 
 
 
@@ -725,20 +784,20 @@ def calc_risk_scores(bimfile_name, rs_id_map, phen_map, K_bins=1,out_file=None,v
                 out_str += '\n'
                 f.write(out_str)
 
-        if weights_dict != None:
-            oh5f = h5py.File(out_file + '.weights.hdf5', 'w')
-            for k1 in weights_dict.keys():
-                kg = oh5f.create_group(k1)
-                for k2 in weights_dict[k1]:
-                    kg.create_dataset(k2, data=sp.array(weights_dict[k1][k2]))
-            oh5f.close()
+        # if weights_dict != None:
+        #     oh5f = h5py.File(out_file + '.weights.hdf5', 'w')
+        #     for k1 in weights_dict.keys():
+        #         kg = oh5f.create_group(k1)
+        #         for k2 in weights_dict[k1]:
+        #             kg.create_dataset(k2, data=sp.array(weights_dict[k1][k2]))
+        #     oh5f.close()
     return res_dict
 
 def main():
     p_dict = parse_parameters()
     print(p_dict)
     non_zero_chromosomes =set()
-    print(p_dict)
+    #print(p_dict)
     #Parse phenotypes
     if p_dict['pf'] is None:
         if p_dict['vgf'] is not None:
@@ -769,12 +828,11 @@ def main():
             else:
                 out_file = '%s_validation_LDpred-funct_inf.txt' % (p_dict['out'])
             rsid_map=parse_ldpred_res_bins(weights_file, K_bins=K_bins)
-            calc_risk_scores(p_dict['vgf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file)
+            calc_risk_scores(p_dict['vgf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,weights_file=weights_file)
 
 
     else:
         raise NotImplementedError('Results file format missing or unknown: %s'%p_dict['res_format'])
-
 
 
 
