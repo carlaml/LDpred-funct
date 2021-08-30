@@ -191,7 +191,7 @@ def natural_keys(text):
 def parse_sum_stats_standard_ldscore(filename=None,
                                      bimfile_name=None,
                              hdf5_file_name=None,
-                             n=None,outfile=None,filter=0,FUNCT_separate=True,FUNCT_FILE=False,CHISQ=False):
+                             n=None,outfile=None,filter=0,FUNCT_separate=True,FUNCT_FILE=False,CHISQ=False,FUNCT_same_h2gi=False,h2g=None):
     """
     Summary statistics file must have the following columns with the following header (order is not important)
     CHR BP SNP A1 A2 BETA Z P
@@ -290,12 +290,15 @@ def parse_sum_stats_standard_ldscore(filename=None,
                                 raw_beta = float(l[idx_BETA])
                                 chrom_dict[chrom]['log_odds'].append(raw_beta)
                                 if CHISQ:
-                                    beta = sp.sign(float(l[idx_BETA])) * abs(sp.sqrt(float(l[idx_Z])))
+                                    beta = sp.sign(float(l[idx_BETA])) * sp.sqrt(abs(float(l[idx_Z])))
                                 else:
                                     beta = sp.sign(float(l[idx_BETA]))*abs(float(l[idx_Z]))
                                 beta_norm.append(beta / sp.sqrt(n))
                                 chrom_dict[chrom]['betas'].append(beta / sp.sqrt(n))
-                                chrom_dict[chrom]['ld_score'].append(float(funct_dict[sid]))
+                                if FUNCT_same_h2gi:
+                                    chrom_dict[chrom]['ld_score'].append(float(h2g) / len(valid_sids))
+                                else:
+                                    chrom_dict[chrom]['ld_score'].append(float(funct_dict[sid]))
                             else:
                                 n_snps_h2pos += 1
                                 chrom_dict[chrom]['sids'].append(sid)
@@ -308,7 +311,10 @@ def parse_sum_stats_standard_ldscore(filename=None,
                                 chrom_dict[chrom]['log_odds'].append(raw_beta)
                                 beta = sp.sign(raw_beta)*((-1)*stats.norm.ppf(pval / 2.0))
                                 chrom_dict[chrom]['betas'].append(beta / sp.sqrt(n))
-                                chrom_dict[chrom]['ld_score'].append(float(funct_dict[sid]))
+                                if FUNCT_same_h2gi:
+                                    chrom_dict[chrom]['ld_score'].append(float(h2g) / len(valid_sids))
+                                else:
+                                    chrom_dict[chrom]['ld_score'].append(float(funct_dict[sid]))
                 except ValueError:
                     print "Issue with the following line: %s" % " ".join(l)
 
@@ -368,6 +374,9 @@ def parse_sum_stats_standard_ldscore(filename=None,
         hdf5_file.flush()
     hdf5_file.close()
     print '%d SNPs parsed from summary statistics file.' % num_snps
+
+
+
 
 
 
