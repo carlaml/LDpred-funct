@@ -70,7 +70,7 @@ def parse_parameters():
             elif opt in ("--validate_only"):
                 p_dict['validate_only'] = True
             elif opt in ("--print-weights"):
-                p_dict['print_weights_funct'] = True
+                p_dict['print-weights'] = True
             elif opt in ("--simulations"):
                 p_dict['simulations'] = True
             elif opt in ("--chisq"):
@@ -163,7 +163,7 @@ def main():
             stop = time.time()
             print('Time total for dividing bins PRS: ', stop - start)
             #start = time.time()
-            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map, K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'],weights_file=weights_file,print_effects=p_dict['print_weights_funct'])
+            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map, K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'],weights_file=weights_file,print_effects=p_dict['print-weights'])
             #stop = time.time()
             #print('Time total for PRS: ', stop - start)
     else:
@@ -225,7 +225,7 @@ def main():
             #print('Time total for dividing bins PRS: ', stop - start)
 
             #start = time.time()
-            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'],weights_file=weights_file,print_effects=p_dict['print_weights_funct'])
+            prs.calc_risk_scores(p_dict['gf'], rsid_map, phen_map,K_bins=K_bins, out_file=out_file,verbose=p_dict['verbose'],weights_file=weights_file,print_effects=p_dict['print-weights'])
             #stop = time.time()
             #print('Time total for PRS: ', stop - start)
 
