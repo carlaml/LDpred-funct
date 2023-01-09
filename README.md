@@ -86,6 +86,7 @@ You also need to install the packages **h5py**, **scipy**, and **libplinkio**. W
 plinkfile="my_plink_files/Final.chrom[1:22]"
 outCoord="my_analysis/Coord_Final"
 statsfile="my_analysis/sumary_statistics.txt"
+functfile="my_analysis/functfile_sldsc.txt"
 outLdpredfunct="my_analysis/ldpredfunct_posterior_means"
 outValidate="my_analysis/ldpredfunct_prs"
 phenotype="my_analysis/trait_1.txt"
@@ -96,7 +97,7 @@ optional flags:
 --ld_radius= Pre-defined ld-radius
 --K= Number of bins for LDpred-funct
 
-python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${statsfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpredfunct}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
+python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${functfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpredfunct}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
 ```
 ### Running recommendations
 For UK Biobank analysis described in [Marquez-Luna, et al, "Modeling functional enrichment improves polygenic prediction accuracy in UK Biobank and 23andMe data sets", Biorxiv.](https://www.biorxiv.org/content/early/2018/07/24/375337), I requested 70G of memory and the jobs lasted approximately 10 hours per trait.  
