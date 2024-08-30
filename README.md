@@ -1,5 +1,5 @@
 # LDpred-funct
-Here we present the software for the method LDpredfunct described in [Marquez-Luna, et al, "Modeling functional enrichment improves polygenic prediction accuracy in UK Biobank and 23andMe data sets", Biorxiv.](https://www.biorxiv.org/content/early/2018/07/24/375337)
+Here we present the software for the method LDpredfunct described in [Márquez-Luna, C., Gazal, S., Loh, PR. et al. Incorporating functional priors improves polygenic prediction accuracy in UK Biobank and 23andMe data sets. Nat Commun 12, 6052 (2021). https://doi.org/10.1038/s41467-021-25171-9](https://www.nature.com/articles/s41467-021-25171-9)
 
 ### Installing LDpred-funct
 
@@ -100,7 +100,7 @@ optional flags:
 python LDpred-funct/ldpredfunct.py --gf=${plinkfile} --pf=${phenotype} --FUNCT_FILE=${functfile}  --coord=${outCoord} --ssf=${statsfile} --N=${N} --posterior_means=${outLdpredfunct}  --H2=${h2} --out=${outValidate} > ${outValidate}.log
 ```
 ### Running recommendations
-For UK Biobank analysis described in [Marquez-Luna, et al, "Modeling functional enrichment improves polygenic prediction accuracy in UK Biobank and 23andMe data sets", Biorxiv.](https://www.biorxiv.org/content/early/2018/07/24/375337), I requested 70G of memory and the jobs lasted approximately 10 hours per trait.  
+For UK Biobank analysis described in [Márquez-Luna, C., Gazal, S., Loh, PR. et al. Incorporating functional priors improves polygenic prediction accuracy in UK Biobank and 23andMe data sets. Nat Commun 12, 6052 (2021). https://doi.org/10.1038/s41467-021-25171-9](https://www.nature.com/articles/s41467-021-25171-9), I requested 70G of memory and the jobs lasted approximately 10 hours per trait.  
 
 #### Acknowledgments
 We used LDpred software developed by Bjarni Vilhjalmsson as basis for this software.
